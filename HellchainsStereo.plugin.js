@@ -2,6 +2,8 @@
  * @name HellchainsStereo
  * @version hellchainsW
  * @authorLink https://github.com/germanmfs
+ * @linktree https://linktr.ee/hellchains
+ * @source https://github.com/germanmfs/HellchainsStereo
  */
 
 
