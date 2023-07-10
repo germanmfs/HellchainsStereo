@@ -74,7 +74,7 @@ module.exports = (() => {
       ) {
         if (this.settings.enableToasts) {
           Toasts.show(
-            "Please disable echo cancellation, noise reduction, and noise suppression for SovietStereo",
+            "Please disable echo cancellation, noise reduction, and noise suppression for HellchainsStereo",
             { type: "warning", timeout: 5000 }
           );
         }
@@ -91,22 +91,22 @@ module.exports = (() => {
       thisObj.conn.setTransportOptions = function (obj) {
         if (obj.audioEncoder) {
           obj.audioEncoder.params = {
-            stereo: "19",
+            stereo: "4",
           };
-          obj.audioEncoder.channels = 2;
+          obj.audioEncoder.channels = 4;
         }
         if (obj.fec) {
           obj.fec = false;
         }
-        if (obj.encodingVoiceBitRate < 6500*26 ) { //265
-                obj.encodingVoiceBitRate = 6500*26
+        if (obj.encodingVoiceBitRate < 3840000 ) { //128
+                obj.encodingVoiceBitRate = 5120000
         }
         
         setTransportOptions.call(thisObj, obj);
       };
       if (!this.settingsWarning()) {
         if (this.settings.enableToasts) {
-          Toasts.info("join https://discord.gg/EU8696SK");
+          Toasts.info("hellW");
         }
       }
       return ret;
