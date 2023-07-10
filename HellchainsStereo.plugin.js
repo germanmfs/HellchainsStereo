@@ -4,6 +4,7 @@
  * @authorLink https://github.com/germanmfs
  * @linktree https://linktr.ee/hellchains
  * @source https://github.com/germanmfs/HellchainsStereo
+ * @Updateurl https://github.com/germanmfs/HellchainsStereo/blob/main/HellchainsStereo.plugin.js
  */
 
 
@@ -33,7 +34,7 @@
 @else@*/
 
 module.exports = (() => {
-    const config = {"main":"index.js","info":{"name":"HellchainsStereo","authors":[{"name":"hellchains","discord_id":"810948947022708786","github_username":"germanmfs"}],"authorLink":"https://github.com/germanmfs","version":"0.0.2","description":"Hellchains PersonalStereo","github":"https://github.com/germanmfs","github_raw":"https://github.com/germanmfs"},"changelog":[{"title":"Changes","items":["Adjusted warning toast behavior,added some changes to the stereosound"]}],"defaultConfig":[{"type":"switch","id":"enableToasts","name":"Enable Toasts","note":"Allows the plugin to let you know it is working, and also warn you about voice settings","value":true}]};
+    const config = {"main":"index.js","info":{"name":"HellchainsStereo","authors":[{"name":"hellchains","discord_id":"810948947022708786","github_username":"germanmfs"}],"authorLink":"https://github.com/germanmfs","version":"0.0.3","description":"Hellclan's Stereo plugin","github":"https://github.com/germanmfs","github_raw":"https://github.com/germanmfs"},"changelog":[{"title":"Changes","items":["Adjusted warning toast behavior,added some changes to the stereosound"]}],"defaultConfig":[{"type":"switch","id":"enableToasts","name":"Enable Toasts","note":"Allows the plugin to let you know it is working, and also warn you about voice settings","value":true}]};
 
     return !global.ZeresPluginLibrary ? class {
         constructor() {this._config = config;}
