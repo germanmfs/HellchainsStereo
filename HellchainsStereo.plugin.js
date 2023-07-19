@@ -45,7 +45,7 @@ module.exports = (() => {
         }
       ],
       "authorLink": "https://github.com/germanmfs",
-      "version": "0.0.5",
+      "version": "0.0.6",
       "description": "Hellclan's Stereo plugin",
       "github": "https://github.com/germanmfs",
       "github_raw": "https://github.com/germanmfs"
