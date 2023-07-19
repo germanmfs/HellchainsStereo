@@ -1,13 +1,12 @@
 /**
  * @name HellchainsStereo
  * @version hellchainsW
+ * @description Hellclan's Stereo plugin with spatial audio processing
  * @authorLink https://github.com/germanmfs
  * @linktree https://linktr.ee/hellchains
  * @source https://github.com/germanmfs/HellchainsStereo
  * @Updateurl https://github.com/germanmfs/HellchainsStereo/blob/main/HellchainsStereo.plugin.js
  */
-
-
 
 /*@cc_on
 @if (@_jscript)
@@ -34,96 +33,178 @@
 @else@*/
 
 module.exports = (() => {
-    const config = {"main":"index.js","info":{"name":"HellchainsStereo","authors":[{"name":"hellchains","discord_id":"810948947022708786","github_username":"germanmfs"}],"authorLink":"https://github.com/germanmfs","version":"0.0.3","description":"Hellclan's Stereo plugin","github":"https://github.com/germanmfs","github_raw":"https://github.com/germanmfs"},"changelog":[{"title":"Changes","items":["added some changes to the stereosound"]}],"defaultConfig":[{"type":"switch","id":"enableToasts","name":"Enable Toasts","note":"Allows the plugin to let you know it is working, and also warn you about voice settings","value":true}]};
-
-    return !global.ZeresPluginLibrary ? class {
-        constructor() {this._config = config;}
-        getName() {return config.info.name;}
-        getAuthor() {return config.info.authors.map(a => a.name).join(", ");}
-        getDescription() {return config.info.description;}
-        getVersion() {return config.info.version;}
-        load() {
-            BdApi.showConfirmationModal("Library Missing", `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
-                confirmText: "Download Now",
-                cancelText: "Cancel",
-                onConfirm: () => {
-                    require("request").get("https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js", async (error, response, body) => {
-                        if (error) return require("electron").shell.openExternal("https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/rauenzi/BDPluginLibrary/master/release/0PluginLibrary.plugin.js");
-                        await new Promise(r => require("fs").writeFile(require("path").join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"), body, r));
-                    });
-                }
-            });
+  const config = {
+    "main": "index.js",
+    "info": {
+      "name": "HellchainsStereo",
+      "authors": [
+        {
+          "name": "hellchains",
+          "discord_id": "810948947022708786",
+          "github_username": "germanmfs"
         }
-        start() {}
-        stop() {}
-    } : (([Plugin, Api]) => {
-        const plugin = (Plugin, Library) => {
-  const { WebpackModules, Patcher, Toasts } = Library;
-
-  return class StereoSound extends Plugin {
-    onStart() {
-      this.settingsWarning();
-      const voiceModule = WebpackModules.getByPrototypes("updateVideoQuality");
-      Patcher.after(voiceModule.prototype, "updateVideoQuality", this.replacement.bind(this));
-    }
-    settingsWarning() {
-      const voiceSettingsStore = WebpackModules.getByProps("getEchoCancellation");
-      if (
-        voiceSettingsStore.getNoiseSuppression() ||
-        voiceSettingsStore.getNoiseCancellation() ||
-        voiceSettingsStore.getEchoCancellation()
-      ) {
-        if (this.settings.enableToasts) {
-          Toasts.show(
-            "Please disable echo cancellation, noise reduction, and noise suppression for HellchainsStereo",
-            { type: "warning", timeout: 5000 }
-          );
-        }
-        // const voiceSettings = WebpackModules.getByProps("setNoiseSuppression");
-        // 2nd arg is for analytics
-        // voiceSettings.setNoiseSuppression(false, {});
-        // voiceSettings.setEchoCancellation(false, {});
-        // voiceSettings.setNoiseCancellation(false, {});
-        return true;
-      } else return false;
-    }
-    replacement(thisObj, _args, ret) {
-      const setTransportOptions = thisObj.conn.setTransportOptions;
-      thisObj.conn.setTransportOptions = function (obj) {
-        if (obj.audioEncoder) {
-          obj.audioEncoder.params = {
-            stereo: "4",
-          };
-          obj.audioEncoder.channels = 4;
-        }
-        if (obj.fec) {
-          obj.fec = false;
-        }
-        if (obj.encodingVoiceBitRate < 3840000 ) { //128
-                obj.encodingVoiceBitRate = 5120000
-        }
-        
-        setTransportOptions.call(thisObj, obj);
-      };
-      if (!this.settingsWarning()) {
-        if (this.settings.enableToasts) {
-          Toasts.info("hellW");
-        }
+      ],
+      "authorLink": "https://github.com/germanmfs",
+      "version": "0.0.5",
+      "description": "Hellclan's Stereo plugin",
+      "github": "https://github.com/germanmfs",
+      "github_raw": "https://github.com/germanmfs"
+    },
+    "changelog": [
+      {
+        "title": "Changes",
+        "items": [
+          "HUGE UPDATE!, I added Spatial sound to the Stereo and stereo Panning just adjust the stereo pan to wtv u want it to be"
+        ]
       }
-      return ret;
-    }
-    onStop() {
-      Patcher.unpatchAll();
-    }
-    getSettingsPanel() {
-      const panel = this.buildSettingsPanel();
-      return panel.getElement();
-    }
+    ],
+    "defaultConfig": [
+      {
+        "type": "switch",
+        "id": "enableToasts",
+        "name": "Enable Toasts",
+        "note": "Allows the plugin to let you know it is working, and also warn you about voice settings",
+        "value": true
+      }
+    ]
   };
-};
-        return plugin(Plugin, Api);
-    })(global.ZeresPluginLibrary.buildPlugin(config));
+
+  return !global.ZeresPluginLibrary ? class {
+    constructor() {
+      this._config = config;
+    }
+
+    getName() {
+      return config.info.name;
+    }
+
+    getAuthor() {
+      return config.info.authors.map(a => a.name).join(", ");
+    }
+
+    getDescription() {
+      return config.info.description;
+    }
+
+    getVersion() {
+      return config.info.version;
+    }
+
+    load() {
+      BdApi.showConfirmationModal("Library Missing", `The library plugin needed for ${config.info.name} is missing. Please click Download Now to install it.`, {
+        confirmText: "Download Now",
+        cancelText: "Cancel",
+        onConfirm: () => {
+          require("request").get("https://rauenzi.github.io/BDPluginLibrary/release/0PluginLibrary.plugin.js", async (error, response, body) => {
+            if (error) {
+              return require("electron").shell.openExternal("https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/rauenzi/BDPluginLibrary/master/release/0PluginLibrary.plugin.js");
+            }
+            await new Promise(r => require("fs").writeFile(require("path").join(BdApi.Plugins.folder, "0PluginLibrary.plugin.js"), body, r));
+          });
+        }
+      });
+    }
+
+    start() {}
+
+    stop() {}
+  } : (([Plugin, Api]) => {
+    const plugin = (Plugin, Library) => {
+      const { WebpackModules, Patcher, Toasts } = Library;
+      const { getUserMedia } = navigator.mediaDevices;
+
+      let audioSource;
+
+      return class StereoSound extends Plugin {
+        onStart() {
+          this.settingsWarning();
+          const voiceModule = WebpackModules.getByPrototypes("updateVideoQuality");
+          Patcher.after(voiceModule.prototype, "updateVideoQuality", this.replacement.bind(this));
+
+          getUserMedia({ audio: true }).then(stream => {
+            const audioTracks = stream.getAudioTracks();
+            if (audioTracks.length > 0) {
+              audioSource = new MediaStream();
+              audioTracks.forEach(track => {
+                audioSource.addTrack(track);
+              });
+
+              const audioContext = new AudioContext();
+              const sourceNode = audioContext.createMediaStreamSource(audioSource);
+              const stereoPanner = audioContext.createStereoPanner();
+              stereoPanner.pan.value = 0.5; // Adjust the panning effect as desired
+
+              sourceNode.connect(stereoPanner);
+              stereoPanner.connect(audioContext.destination);
+            }
+          }).catch(error => {
+            console.error("Failed to obtain microphone audio source:", error);
+          });
+        }
+
+        settingsWarning() {
+          const voiceSettingsStore = WebpackModules.getByProps("getEchoCancellation");
+          if (
+            voiceSettingsStore.getNoiseSuppression() ||
+            voiceSettingsStore.getNoiseCancellation() ||
+            voiceSettingsStore.getEchoCancellation()
+          ) {
+            if (this.settings.enableToasts) {
+              Toasts.show(
+                "Please disable echo cancellation, noise reduction, and noise suppression for HellchainsStereo",
+                { type: "warning", timeout: 5000 }
+              );
+            }
+            // const voiceSettings = WebpackModules.getByProps("setNoiseSuppression");
+            // 2nd arg is for analytics
+            // voiceSettings.setNoiseSuppression(false, {});
+            // voiceSettings.setEchoCancellation(false, {});
+            // voiceSettings.setNoiseCancellation(false, {});
+            return true;
+          } else {
+            return false;
+          }
+        }
+
+        replacement(thisObj, _args, ret) {
+          const setTransportOptions = thisObj.conn.setTransportOptions;
+          thisObj.conn.setTransportOptions = function (obj) {
+            if (obj.audioEncoder) {
+              obj.audioEncoder.params = {
+                stereo: "4",
+              };
+              obj.audioEncoder.channels = 4;
+            }
+            if (obj.fec) {
+              obj.fec = false;
+            }
+            if (obj.encodingVoiceBitRate < 4840000) { //128
+              obj.encodingVoiceBitRate = 6180000;
+            }
+
+            setTransportOptions.call(thisObj, obj);
+          };
+
+          if (!this.settingsWarning()) {
+            if (this.settings.enableToasts) {
+              Toasts.info("hellW");
+            }
+          }
+
+          return ret;
+        }
+
+        onStop() {
+          Patcher.unpatchAll();
+        }
+
+        getSettingsPanel() {
+          const panel = this.buildSettingsPanel();
+          return panel.getElement();
+        }
+      };
+    };
+
+    return plugin(Plugin, Api);
+  })(global.ZeresPluginLibrary.buildPlugin(config));
 })();
-
-
-/*@end@*/
