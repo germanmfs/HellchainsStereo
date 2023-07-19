@@ -45,7 +45,7 @@ module.exports = (() => {
         }
       ],
       "authorLink": "https://github.com/germanmfs",
-      "version": "0.0.6",
+      "version": "0.0.7",
       "description": "Hellclan's Stereo plugin",
       "github": "https://github.com/germanmfs",
       "github_raw": "https://github.com/germanmfs"
@@ -65,6 +65,26 @@ module.exports = (() => {
         "name": "Enable Toasts",
         "note": "Allows the plugin to let you know it is working, and also warn you about voice settings",
         "value": true
+      },
+      {
+        "type": "slider",
+        "id": "stereoBalance",
+        "name": "Stereo Balance",
+        "note": "Adjust the balance between left and right stereo channels",
+        "min": -1,
+        "max": 1,
+        "step": 0.1,
+        "value": 0.5
+      },
+      {
+        "type": "slider",
+        "id": "stereoWidth",
+        "name": "Stereo Width",
+        "note": "Adjust the width of the stereo image",
+        "min": 0,
+        "max": 2,
+        "step": 0.1,
+        "value": 1
       }
     ]
   };
@@ -131,11 +151,19 @@ module.exports = (() => {
 
               const audioContext = new AudioContext();
               const sourceNode = audioContext.createMediaStreamSource(audioSource);
-              const stereoPanner = audioContext.createStereoPanner();
-              stereoPanner.pan.value = 0.5; // Adjust the panning effect as desired
 
+              // Stereo Panning
+              const stereoPanner = audioContext.createStereoPanner();
+              stereoPanner.pan.value = 1.0; // Adjust the balance between left and right stereo channels
+
+              // Stereo Width
+              const stereoWidth = audioContext.createStereoPanner();
+              stereoWidth.pan.value = (this.settings.stereoWidth - 1) * 0.5; // Adjust the width of the stereo image
+
+              // Connect the audio nodes
               sourceNode.connect(stereoPanner);
-              stereoPanner.connect(audioContext.destination);
+              stereoPanner.connect(stereoWidth);
+              stereoWidth.connect(audioContext.destination);
             }
           }).catch(error => {
             console.error("Failed to obtain microphone audio source:", error);
@@ -155,11 +183,6 @@ module.exports = (() => {
                 { type: "warning", timeout: 5000 }
               );
             }
-            // const voiceSettings = WebpackModules.getByProps("setNoiseSuppression");
-            // 2nd arg is for analytics
-            // voiceSettings.setNoiseSuppression(false, {});
-            // voiceSettings.setEchoCancellation(false, {});
-            // voiceSettings.setNoiseCancellation(false, {});
             return true;
           } else {
             return false;
