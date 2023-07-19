@@ -1,11 +1,11 @@
 /**
  * @name HellchainsStereo
  * @version hellchainsW
- * @description Hellclan's Stereo plugin with spatial audio processing
+ * @description Hellclan's Stereo plugin with spatial audio processing and Haas effect
  * @authorLink https://github.com/germanmfs
  * @linktree https://linktr.ee/hellchains
  * @source https://github.com/germanmfs/HellchainsStereo
- * @Updateurl https://github.com/germanmfs/HellchainsStereo/blob/main/HellchainsStereo.plugin.js
+ * @updateUrl https://github.com/germanmfs/HellchainsStereo/blob/main/HellchainsStereo.plugin.js
  */
 
 /*@cc_on
@@ -45,7 +45,7 @@ module.exports = (() => {
         }
       ],
       "authorLink": "https://github.com/germanmfs",
-      "version": "0.0.7",
+      "version": "0.0.8",
       "description": "Hellclan's Stereo plugin",
       "github": "https://github.com/germanmfs",
       "github_raw": "https://github.com/germanmfs"
@@ -154,15 +154,20 @@ module.exports = (() => {
 
               // Stereo Panning
               const stereoPanner = audioContext.createStereoPanner();
-              stereoPanner.pan.value = 1.0; // Adjust the balance between left and right stereo channels
+              stereoPanner.pan.value = this.settings.stereoBalance; // Adjust the balance between left and right stereo channels
 
               // Stereo Width
               const stereoWidth = audioContext.createStereoPanner();
               stereoWidth.pan.value = (this.settings.stereoWidth - 1) * 0.5; // Adjust the width of the stereo image
 
+              // Haas Effect
+              const delayNode = audioContext.createDelay();
+              delayNode.delayTime.value = 0.03; // Adjust the delay time in seconds (e.g., 0.03 seconds)
+
               // Connect the audio nodes
               sourceNode.connect(stereoPanner);
-              stereoPanner.connect(stereoWidth);
+              stereoPanner.connect(delayNode);
+              delayNode.connect(stereoWidth);
               stereoWidth.connect(audioContext.destination);
             }
           }).catch(error => {
